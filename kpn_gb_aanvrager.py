@@ -42,9 +42,9 @@ def gb_aanvraag(amount, email, password):
 
     reject_cookies = wait.until(EC.presence_of_element_located((By.ID, "onetrust-reject-all-handler")))
     reject_cookies.click()
-    login_email = wait.until(EC.presence_of_element_located((By.ID, "email")))
+    login_email = wait.until(EC.presence_of_element_located((By.ID, "kpn-form-field-15")))
     login_email.send_keys(email)
-    login_password = wait.until(EC.presence_of_element_located((By.ID, "password")))
+    login_password = wait.until(EC.presence_of_element_located((By.ID, "kpn-form-field-16")))
     login_password.send_keys(password)
     time.sleep(2)
     log_in = wait.until(EC.element_to_be_clickable((By.NAME, "inloggen")))
@@ -73,6 +73,7 @@ def gb_aanvraag(amount, email, password):
         print("zet extra optie aan")
         counter += 1
         print(f"{counter}/{amount}")
+        time.sleep(1)
         try:
             extra_mb = wait.until(EC.element_to_be_clickable((By.XPATH, '//span[text()="Extra MB\'s/min/sms"]')))
             extra_mb.click()
