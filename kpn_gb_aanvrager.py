@@ -42,9 +42,10 @@ def gb_aanvraag(amount, email, password):
 
     reject_cookies = wait.until(EC.presence_of_element_located((By.ID, "onetrust-reject-all-handler")))
     reject_cookies.click()
-    login_email = wait.until(EC.presence_of_element_located((By.ID, "kpn-form-field-15")))
+    login_email = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[data-test='emailAddress']")))
     login_email.send_keys(email)
-    login_password = wait.until(EC.presence_of_element_located((By.ID, "kpn-form-field-16")))
+    time.sleep(1)
+    login_password = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[data-test='password']")))
     login_password.send_keys(password)
     time.sleep(2)
     log_in = wait.until(EC.element_to_be_clickable((By.NAME, "inloggen")))
@@ -62,44 +63,34 @@ def gb_aanvraag(amount, email, password):
     while counter < amount:
         optie_2gb = wait.until(EC.element_to_be_clickable((By.XPATH, '//p[text()="2 GB extra dagbundel"]')))
         optie_2gb.click()
-        print("optie 2gb")
         time.sleep(1)
         ik_ga_akkoord = wait.until(EC.presence_of_element_located((By.ID, 'agree')))    
         driver.execute_script("arguments[0].click();", ik_ga_akkoord)
-        print("ik ga akkoord")
         time.sleep(1)
         zet_extra_optie_aan = wait.until(EC.element_to_be_clickable((By.XPATH, '//a[text()="Zet extra optie aan"]')))
         zet_extra_optie_aan.click()
-        print("zet extra optie aan")
         counter += 1
-        print(f"{counter}/{amount}")
         time.sleep(1)
         try:
             extra_mb = wait.until(EC.element_to_be_clickable((By.XPATH, '//span[text()="Extra MB\'s/min/sms"]')))
             extra_mb.click()
             time.sleep(1)
-            print("extra mb try 1")
         except:
             try:
                 terug = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "link_back")))
                 terug.click()
                 amount += 1
-                print("terug try 2")
                 time.sleep(1)
                 continue
             except:
                 producten = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "ProductenTab")))
                 producten.click()
-                print("producten except 2")
                 mobiel = wait.until(EC.element_to_be_clickable((By.XPATH, "//span[text()='Mobiel']")))
                 mobiel.click()
-                print("mobiel except 2")
                 mb_kopen = wait.until(EC.element_to_be_clickable((By.XPATH, '//span[text()="Extra MB\'s en bundels bijkopen"]')))
                 mb_kopen.click()
-                print("mb kopen except 2")
                 extra_mb = wait.until(EC.element_to_be_clickable((By.XPATH, '//span[text()="Extra MB\'s/min/sms"]')))
                 extra_mb.click()
-                print("extra mb except 2")
                 continue
 
     driver.quit()
@@ -107,7 +98,7 @@ def gb_aanvraag(amount, email, password):
 def app():
     root = CTk()
     root.title("KPN GB aanvrager")
-    root.geometry("400x350")
+    root.minsize(400, 350)
 
     email_label = CTkLabel(root, text="Email")
     email_label.pack(pady=2)
@@ -131,7 +122,6 @@ def app():
     def set_amount():
         if int(amount_entry.get()) >= 0:
             amount = int(amount_entry.get())
-            print(amount)
             save_credentials(email_entry.get(), password_entry.get())
             gb_aanvraag(amount, email, password)
         else:
